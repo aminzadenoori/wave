@@ -16,14 +16,12 @@ import React from 'react'
 import { render, fireEvent, createEvent, wait } from '@testing-library/react'
 import { XFileUpload, FileUpload } from './file_upload'
 import * as T from './qd'
-import { initializeIcons } from '@fluentui/react'
 
 const name = 'fileUpload'
 const fileUploadProps: FileUpload = { name }
 interface FileObj { name: T.S; size?: T.F }
 
 describe('FileUpload.tsx', () => {
-  beforeAll(() => initializeIcons())
   beforeEach(() => {
     jest.clearAllMocks()
     T.qd.args[name] = null
@@ -205,6 +203,38 @@ describe('FileUpload.tsx', () => {
       fireEvent(getByTestId(name), createDropEvent(getByTestId(name), [{ name: 'file.pdf', size: 2 * 1024 * 1024 }]))
 
       expect(queryByText('An error occured')).toBeInTheDocument()
+    })
+  })
+
+  describe('compact datepicker', () => {
+    const props = { ...fileUploadProps, compact: true }
+
+    it('Renders data-test attr', () => {
+      const { queryByTestId } = render(<XFileUpload model={props} />)
+      expect(queryByTestId(name)).toBeInTheDocument()
+    })
+
+    it('shows uploaded files in textbox', () => {
+      const { getByTestId } = render(<XFileUpload model={props} />)
+      fireEvent.change(getByTestId(name), createChangeEvent([{ name: 'file.txt' }]))
+
+      expect(getByTestId(`textfield-${name}`)).toHaveValue('file.txt')
+    })
+
+    it('Shows an error when uploading larger file than maxSize', async () => {
+      const { getByTestId, queryByText } = render(<XFileUpload model={{ ...props, max_size: 1 }} />)
+      fireEvent.change(getByTestId(name), createChangeEvent([{ name: 'file.txt', size: 2 * 1024 * 1024 }]))
+
+      expect(getByTestId(`textfield-${name}`)).toHaveValue('')
+      await wait(() => expect(queryByText('Total max file size exceeded. Allowed size: 1Mb.')).toBeInTheDocument(), { timeout: 1000 })
+    })
+
+    it('Shows an error when uploading larger file than maxFileSize', async () => {
+      const { getByTestId, queryByText } = render(<XFileUpload model={{ ...props, max_file_size: 1 }} />)
+      fireEvent.change(getByTestId(name), createChangeEvent([{ name: 'file.txt', size: 2 * 1024 * 1024 }]))
+
+      expect(getByTestId(`textfield-${name}`)).toHaveValue('')
+      await wait(() => expect(queryByText(`Max file size exceeded for files: file.txt. Allowed size per file: 1Mb.`)).toBeInTheDocument(), { timeout: 1000 })
     })
   })
 })

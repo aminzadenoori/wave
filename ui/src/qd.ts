@@ -758,6 +758,7 @@ export interface Qd {
   readonly refreshRateB: Box<U>
   readonly busyB: Box<B>
   readonly dialogB: Box<Dialog | null>
+  files: Map<S, File[]>
   socket: WebSocket | null
   page: Page | null
   username: S | null
@@ -784,6 +785,7 @@ export const qd: Qd = {
   username: null,
   editable: false,
   dialogB: box(null),
+  files: new Map<S, File[]>(),
   edit: (path?: S): PageRef => {
     path = path || qd.path
     const
@@ -807,9 +809,25 @@ export const qd: Qd = {
       }
     return { get, put, set, del, drop, sync }
   },
-  sync: () => {
+  sync: async () => {
     const sock = qd.socket
     if (!sock) return
+
+    qd.busyB(true)
+    // Send files if any.
+    if (qd.files.size) {
+      const res = await Promise.all(
+        Array.from(qd.files.entries()).map(async ([name, uploadedFiles]) => {
+          const body = new FormData()
+          uploadedFiles.forEach(f => body.append('files', f))
+          const uploadRes = await window.fetch('/_f', { method: 'POST', body })
+          const { files } = JSON.parse(await uploadRes.text())
+          return [name, files]
+        }))
+      res.forEach(([name, files]) => qd.args[name] = files)
+      qd.files.clear()
+    }
+
     const args: Dict<any> = { ...qd.args }
     clearRec(qd.args)
     if (Object.keys(qd.events).length) {
@@ -818,7 +836,6 @@ export const qd: Qd = {
     }
     sock.send(`@ ${qd.path} ${JSON.stringify(args)}`)
     track(args)
-    qd.busyB(true)
   },
   jump: (key: any, value: any) => {
     if (value.startsWith('#')) {
