@@ -17,7 +17,7 @@ async def serve(q: Q):
             box='1 1 4 10',
             items=[
                 ui.file_upload(name='file_upload', label='Upload!', multiple=True,
-                               file_extensions=['csv', 'gz'], max_file_size=10, max_size=15),
+                               file_extensions=['csv', 'gz'], max_file_size=10, max_size=15)
             ]
         )
     await q.page.save()

@@ -1,6 +1,6 @@
 # Form / File Upload / Compact
-# Use a compact file #upload component to allow users to upload files.
-# #form #file_upload
+# Use a compact file #upload component to take less form space.
+# #form #file_upload #compact
 # ---
 from h2o_wave import main, app, Q, ui
 
