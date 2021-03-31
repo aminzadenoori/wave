@@ -37,7 +37,7 @@ export interface FileUpload {
   max_size?: F
   /** The height of the file upload, e.g. '400px', '50%', etc. */
   height?: S
-  /** Indicates whether file upload should be displayed in minimal mode without drag & drop functionality. Defaults to false. */
+  /** True if the component should be displayed compactly (without drag-and-drop capabilities). Defaults to false. */
   compact?: B
   /** True if the component should be visible. Defaults to true. */
   visible?: B
