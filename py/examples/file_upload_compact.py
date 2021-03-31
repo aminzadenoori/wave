@@ -1,5 +1,5 @@
-# Form / File Upload
-# Use a file #upload component to allow users to upload files.
+# Form / File Upload / Compact
+# Use a compact file #upload component to allow users to upload files.
 # #form #file_upload
 # ---
 from h2o_wave import main, app, Q, ui
@@ -16,8 +16,9 @@ async def serve(q: Q):
         q.page['example'] = ui.form_card(
             box='1 1 4 10',
             items=[
-                ui.file_upload(name='file_upload', label='Upload!', multiple=True,
-                               file_extensions=['csv', 'gz'], max_file_size=10, max_size=15),
+                ui.file_upload(name='file_upload', label='Select one or more files to upload', compact=True,
+                               multiple=True, file_extensions=['jpg', 'png'], max_file_size=1, max_size=15),
+                ui.button(name='submit', label='Submit', primary=True)
             ]
         )
     await q.page.save()

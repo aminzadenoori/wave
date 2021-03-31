@@ -1327,7 +1327,7 @@ ui_buttons <- function(
 #' @param max_file_size Maximum allowed size (Mb) per file. Defaults to no limit.
 #' @param max_size Maximum allowed size (Mb) for all files combined. Defaults to no limit.
 #' @param height The height of the file upload, e.g. '400px', '50%', etc.
-#' @param compact Indicates whether file upload should be displayed in minimal mode without drag & drop functionality. Defaults to false.
+#' @param compact True if the component should be displayed compactly (without drag-and-drop capabilities). Defaults to false.
 #' @param visible True if the component should be visible. Defaults to true.
 #' @param tooltip An optional tooltip message displayed when a user clicks the help icon to the right of the component.
 #' @return A FileUpload instance.

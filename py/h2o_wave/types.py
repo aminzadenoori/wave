@@ -2943,7 +2943,7 @@ class FileUpload:
         self.height = height
         """The height of the file upload, e.g. '400px', '50%', etc."""
         self.compact = compact
-        """Indicates whether file upload should be displayed in minimal mode without drag & drop functionality. Defaults to false."""
+        """True if the component should be displayed compactly (without drag-and-drop capabilities). Defaults to false."""
         self.visible = visible
         """True if the component should be visible. Defaults to true."""
         self.tooltip = tooltip

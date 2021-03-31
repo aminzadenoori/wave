@@ -66,7 +66,7 @@ const
       borderRadius: 2,
       background: cssVar('$themePrimary'),
       color: cssVar('$page'),
-      minWidth: 120,
+      minWidth: 80,
       boxSizing: 'border-box',
       height: 32,
       $nest: {
@@ -163,7 +163,9 @@ export const
         const fileArr = Array.from(files)
 
         const errMsg = validateFiles(fileArr)
-        if (errMsg) errorB(errMsg)
+        if (errMsg) {
+          errorB(errMsg)
+        }
         else {
           if (compact) qd.files.set(name, fileArr)
           filesB(fileArr)
@@ -187,7 +189,11 @@ export const
         const fileArr = Array.from(files)
 
         const errMsg = validateFiles(fileArr)
-        errMsg ? errorB(errMsg) : filesB(fileArr)
+        if (errMsg) {
+          errorB(errMsg)
+          return
+        }
+        filesB(fileArr)
       },
       // Workaround - This event prevents onDrop from firing.
       // https://stackoverflow.com/questions/50230048/react-ondrop-is-not-firing/50230145.
@@ -285,7 +291,7 @@ export const
                 <div className={css.compact}>
                   <Fluent.TextField data-test={`textfield-${name}`} readOnly value={fileNamesB()} styles={{ root: { flexGrow: 1 } }} errorMessage={errorB()} />
                   <input id={name} data-test={name} type='file' hidden onChange={onChange} accept={fileExtensions?.join(',')} multiple={multiple} />
-                  <label htmlFor={name} className={css.uploadLabel}>Browse files</label>
+                  <label htmlFor={name} className={css.uploadLabel}>Browse...</label>
                 </div>
               </>
             )
