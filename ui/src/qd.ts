@@ -810,16 +810,15 @@ export const qd: Qd = {
   sync: async () => {
     const sock = qd.socket
     if (!sock) return
-
     const args: Dict<any> = { ...qd.args }
     clearRec(qd.args)
     if (Object.keys(qd.events).length) {
       args[''] = { ...qd.events }
       clearRec(qd.events)
     }
-    qd.busyB(true)
     sock.send(`@ ${qd.path} ${JSON.stringify(args)}`)
     track(args)
+    qd.busyB(true)
   },
   jump: (key: any, value: any) => {
     if (value.startsWith('#')) {
