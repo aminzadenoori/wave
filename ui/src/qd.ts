@@ -807,7 +807,7 @@ export const qd: Qd = {
       }
     return { get, put, set, del, drop, sync }
   },
-  sync: async () => {
+  sync: () => {
     const sock = qd.socket
     if (!sock) return
     const args: Dict<any> = { ...qd.args }
