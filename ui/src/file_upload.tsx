@@ -15,7 +15,7 @@
 import * as Fluent from '@fluentui/react'
 import React from 'react'
 import { stylesheet } from 'typestyle'
-import { B, bond, box, F, Id, qd, S, U } from './qd'
+import { B, bond, box, F, Id, qd, S, U, on } from './qd'
 import { centerMixin, clas, cssVar, dashed, displayMixin, padding } from './theme'
 
 /**
@@ -88,7 +88,28 @@ const
     compact: {
       display: 'flex'
     }
-  })
+  }),
+  filesMap = new Map<S, File[]>()
+
+let uploadingFiles = false
+// Busy true means sync was called.
+on(qd.busyB, async (busy) => {
+  if (!busy || !filesMap.size || uploadingFiles) return
+
+  const res = await Promise.all(
+    Array.from(filesMap.entries()).map(async ([name, uploadedFiles]) => {
+      const body = new FormData()
+      uploadedFiles.forEach(f => body.append('files', f))
+      uploadingFiles = true
+      const uploadRes = await window.fetch('/_f', { method: 'POST', body })
+      const { files } = JSON.parse(await uploadRes.text())
+      return [name, files]
+    }))
+  res.forEach(([name, files]) => qd.args[name] = files)
+  qd.sync()
+  filesMap.clear()
+  uploadingFiles = false
+})
 const convertMegabytesToBytes = (bytes: F) => bytes * 1024 * 1024
 export const
   XFileUpload = bond(({ model }: { model: FileUpload }) => {
@@ -167,7 +188,7 @@ export const
           errorB(errMsg)
         }
         else {
-          if (compact) qd.files.set(name, fileArr)
+          if (compact) filesMap.set(name, fileArr)
           filesB(fileArr)
           fileNamesB(fileArr.map(({ name }) => name).join(', '))
         }
