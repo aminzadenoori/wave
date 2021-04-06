@@ -96,11 +96,11 @@ let uploadingFiles = false
 on(qd.busyB, async (busy) => {
   if (!busy || !filesMap.size || uploadingFiles) return
 
+  uploadingFiles = true
   const res = await Promise.all(
     Array.from(filesMap.entries()).map(async ([name, uploadedFiles]) => {
       const body = new FormData()
       uploadedFiles.forEach(f => body.append('files', f))
-      uploadingFiles = true
       const uploadRes = await window.fetch('/_f', { method: 'POST', body })
       const { files } = JSON.parse(await uploadRes.text())
       return [name, files]
